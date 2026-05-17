@@ -1,0 +1,10 @@
+[flake8]
+max-line-length = 100
+max-complexity = 10
+exclude =
+    venv,
+    __pycache__,
+    .git,
+    migrations
+per-file-ignores =
+    tests/*:S101
