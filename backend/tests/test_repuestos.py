@@ -5,35 +5,29 @@ Trazabilidad: REQ-F01, REQ-F04
 """
 
 import pytest
+import time
 from fastapi.testclient import TestClient
 from main import app
 
 client = TestClient(app)
 
-TEST_NUMERO_SERIE = "TEST-REP-9991"
+
+def _get_serie():
+    """Genera numero de serie unico por timestamp para evitar conflictos."""
+    return f"TEST-{int(time.time())}"
 
 
-def _limpiar_test_data():
-    """Elimina repuestos y movimientos de test de la BD."""
+def _limpiar(serie):
+    """Elimina repuesto de test y sus movimientos de la BD."""
     from db.supabase_client import supabase
     ids = supabase.table("repuestos").select("id").eq(
-        "numero_serie", TEST_NUMERO_SERIE
+        "numero_serie", serie
     ).execute()
     for row in ids.data:
         supabase.table("movimientos").delete().eq(
             "repuesto_id", row["id"]
         ).execute()
-    supabase.table("repuestos").delete().eq(
-        "numero_serie", TEST_NUMERO_SERIE
-    ).execute()
-
-
-@pytest.fixture(autouse=True)
-def limpiar_repuesto_test():
-    """Limpia datos de test antes Y después de cada test."""
-    _limpiar_test_data()
-    yield
-    _limpiar_test_data()
+    supabase.table("repuestos").delete().eq("numero_serie", serie).execute()
 
 
 # ── REQ-F01 ──────────────────────────────────────────────────────────────────
@@ -45,21 +39,25 @@ def test_crear_repuesto_exitoso():
     TC-001: POST /repuestos con datos válidos retorna 201 y el repuesto creado.
     Trazabilidad: REQ-F01
     """
-    payload = {
-        "nombre": "Repuesto Test",
-        "categoria": "auto",
-        "marca": "TestBrand",
-        "numero_serie": TEST_NUMERO_SERIE,
-        "precio": 1500.0,
-        "stock_inicial": 10,
-        "stock_minimo": 3,
-    }
-    response = client.post("/repuestos/", json=payload)
-    assert response.status_code == 201
-    data = response.json()
-    assert data["nombre"] == "Repuesto Test"
-    assert data["stock_actual"] == 10
-    assert data["categoria"] == "auto"
+    serie = _get_serie()
+    try:
+        payload = {
+            "nombre": "Repuesto Test",
+            "categoria": "auto",
+            "marca": "TestBrand",
+            "numero_serie": serie,
+            "precio": 1500.0,
+            "stock_inicial": 10,
+            "stock_minimo": 3,
+        }
+        response = client.post("/repuestos/", json=payload)
+        assert response.status_code == 201
+        data = response.json()
+        assert data["nombre"] == "Repuesto Test"
+        assert data["stock_actual"] == 10
+        assert data["categoria"] == "auto"
+    finally:
+        _limpiar(serie)
 
 
 @pytest.mark.REQ_F01
@@ -72,7 +70,7 @@ def test_crear_repuesto_precio_negativo():
         "nombre": "Repuesto Test",
         "categoria": "auto",
         "marca": "X",
-        "numero_serie": TEST_NUMERO_SERIE,
+        "numero_serie": _get_serie(),
         "precio": -100.0,
         "stock_inicial": 5,
     }
@@ -90,7 +88,7 @@ def test_crear_repuesto_categoria_invalida():
         "nombre": "Repuesto Test",
         "categoria": "barco",
         "marca": "X",
-        "numero_serie": TEST_NUMERO_SERIE,
+        "numero_serie": _get_serie(),
         "precio": 100.0,
         "stock_inicial": 5,
     }
