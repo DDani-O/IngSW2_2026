@@ -12,6 +12,7 @@ client = TestClient(app)
 
 # ── REQ-F05 ──────────────────────────────────────────────────────────────────
 
+
 @pytest.mark.REQ_F05
 def test_stock_critico_retorna_solo_criticos():
     """
@@ -33,7 +34,6 @@ def test_stock_critico_incluye_limite_exacto():
     TC-015: Repuesto con stock_actual == stock_minimo debe aparecer en stock crítico.
     Trazabilidad: REQ-F05
     """
-    from db.supabase_client import supabase
     # Disco de freno trasero: stock_actual=5, stock_minimo=5 (exactamente igual)
     response = client.get("/alertas/stock-critico")
     assert response.status_code == 200
