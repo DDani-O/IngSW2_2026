@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+"""
+Pre-commit hook — AutoBhan Autopartes
+Corre flake8 y pytest antes de cada commit.
+Escrito en Python para compatibilidad con Windows, Mac y Linux.
+Trazabilidad: Plan SQA — Seccion 8 (Frecuencia de medicion)
+"""
+
+import subprocess
+import sys
+import os
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+BACKEND = ROOT / "backend"
+
+# Detectar python del venv segun OS
+VENV_PYTHON_WIN = BACKEND / "venv" / "Scripts" / "python.exe"
+VENV_PYTHON_UNIX = BACKEND / "venv" / "bin" / "python"
+
+if VENV_PYTHON_WIN.exists():
+    PYTHON = str(VENV_PYTHON_WIN)
+elif VENV_PYTHON_UNIX.exists():
+    PYTHON = str(VENV_PYTHON_UNIX)
+else:
+    print("\n==========================================")
+    print(" AutoBhan — Pre-commit check")
+    print("==========================================")
+    print("\n⚠  No se encontro el venv en backend/venv/")
+    print("   Corré:")
+    print("   cd backend")
+    print("   python -m venv venv")
+    print("   venv\\Scripts\\activate  (Windows)")
+    print("   python -m pip install -r requirements.txt")
+    print()
+    sys.exit(1)
+
+print("\n==========================================")
+print(" AutoBhan — Pre-commit check")
+print("==========================================")
+
+# 1. Linter
+print("\n▶ [1/2] Linter (flake8)...")
+result = subprocess.run(
+    [PYTHON, "-m", "flake8", ".", "--max-complexity=10",
+     "--exclude=venv,__pycache__"],
+    cwd=BACKEND
+)
+if result.returncode != 0:
+    print("\n✗ COMMIT CANCELADO — El linter reporto errores.")
+    print("  Corregi los errores antes de commitear.")
+    print()
+    sys.exit(1)
+print("✓ Linter OK — 0 errores")
+
+# 2. Tests
+print("\n▶ [2/2] Tests (pytest)...")
+result = subprocess.run(
+    [PYTHON, "-m", "pytest", "--tb=short", "-q"],
+    cwd=BACKEND
+)
+if result.returncode != 0:
+    print("\n✗ COMMIT CANCELADO — Hay tests fallando.")
+    print("  Todos los tests deben pasar antes de commitear.")
+    print()
+    sys.exit(1)
+print("✓ Tests OK")
+
+print("\n✓ Pre-commit check completo — procediendo con el commit.")
+print("==========================================\n")
+sys.exit(0)
