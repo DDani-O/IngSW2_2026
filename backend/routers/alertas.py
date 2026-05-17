@@ -13,8 +13,8 @@ router = APIRouter(prefix="/alertas", tags=["Alertas"])
 
 def _get_db():
     """Importa el cliente Supabase de forma lazy para facilitar el testing."""
-    from db.supabase_client import supabase
-    return supabase
+    from db.supabase_client import get_client as supabase
+    return supabase()
 
 
 @router.get("/stock-critico", response_model=List[RepuestoResponse])

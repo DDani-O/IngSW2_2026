@@ -17,8 +17,8 @@ router = APIRouter(prefix="/stock", tags=["Stock"])
 
 def _get_db():
     """Importa el cliente Supabase de forma lazy para facilitar el testing."""
-    from db.supabase_client import supabase
-    return supabase
+    from db.supabase_client import get_client as supabase
+    return supabase()
 
 
 def _obtener_repuesto(db, repuesto_id: int) -> dict:
