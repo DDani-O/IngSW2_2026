@@ -62,3 +62,12 @@ export const salidaStockService = {
 export const alertasService = {
   stockCritico: () => request('/alertas/stock-critico'),
 };
+
+// REQ-F02, REQ-F03: historial de movimientos
+export const historialService = {
+  listar: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/historial/${query ? `?${query}` : ''}`);
+  },
+  porRepuesto: (id) => request(`/historial/${id}`),
+};

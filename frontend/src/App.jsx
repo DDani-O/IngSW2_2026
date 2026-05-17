@@ -8,11 +8,13 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Repuestos from './pages/Repuestos';
 import Movimientos from './pages/Movimientos';
+import Historial from './pages/Historial';
 
 const NAV = [
   { key: 'dashboard', label: '🏠 Dashboard' },
   { key: 'repuestos', label: '🔩 Repuestos' },
   { key: 'movimientos', label: '📦 Movimientos' },
+  { key: 'historial', label: '📋 Historial' },
 ];
 
 export default function App() {
@@ -31,6 +33,7 @@ export default function App() {
   const renderPagina = () => {
     if (pagina === 'repuestos') return <Repuestos />;
     if (pagina === 'movimientos') return <Movimientos />;
+    if (pagina === 'historial') return <Historial />;
     return <Dashboard onLogout={handleLogout} />;
   };
 
