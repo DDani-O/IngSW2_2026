@@ -1,0 +1,60 @@
+#!/bin/sh
+# Pre-commit hook — AutoBhan Autopartes
+# Corre linter y tests antes de cada commit.
+# Si alguno falla, el commit se cancela.
+# Trazabilidad: Plan SQA — Sección 8 (Frecuencia de medición)
+
+echo "=========================================="
+echo " AutoBhan — Pre-commit check"
+echo "=========================================="
+
+# Detectar el directorio raiz del repo
+ROOT=$(git rev-parse --show-toplevel)
+BACKEND="$ROOT/backend"
+
+# Verificar que existe el entorno virtual
+if [ ! -f "$BACKEND/venv/Scripts/python.exe" ] && [ ! -f "$BACKEND/venv/bin/python" ]; then
+    echo ""
+    echo "⚠  No se encontró el venv en backend/venv/"
+    echo "   Corré: cd backend && python -m venv venv && venv/Scripts/activate && python -m pip install -r requirements.txt"
+    echo ""
+    exit 1
+fi
+
+# Detectar python del venv (Windows o Unix)
+if [ -f "$BACKEND/venv/Scripts/python.exe" ]; then
+    PYTHON="$BACKEND/venv/Scripts/python.exe"
+else
+    PYTHON="$BACKEND/venv/bin/python"
+fi
+
+echo ""
+echo "▶ [1/2] Linter (flake8)..."
+cd "$BACKEND" && "$PYTHON" -m flake8 . --max-complexity=10 --exclude=venv,__pycache__
+
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "✗ COMMIT CANCELADO — El linter reportó errores."
+    echo "  Corregí los errores de estilo antes de commitear."
+    echo ""
+    exit 1
+fi
+echo "✓ Linter OK — 0 errores"
+
+echo ""
+echo "▶ [2/2] Tests (pytest)..."
+cd "$BACKEND" && "$PYTHON" -m pytest --tb=short -q
+
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "✗ COMMIT CANCELADO — Hay tests fallando."
+    echo "  Todos los tests deben pasar antes de commitear."
+    echo ""
+    exit 1
+fi
+echo "✓ Tests OK"
+
+echo ""
+echo "✓ Pre-commit check completo — procediendo con el commit."
+echo "=========================================="
+exit 0

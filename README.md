@@ -50,6 +50,20 @@ npm run dev
 
 El frontend queda disponible en `http://localhost:5173`
 
+## Configurar pre-commit hook (obligatorio, una sola vez)
+
+El repositorio incluye un hook que corre **flake8 y pytest automáticamente** antes de cada commit. Si alguno falla, el commit se cancela.
+
+**Windows (PowerShell):**
+```powershell
+.\setup-hooks.ps1
+```
+
+**Mac/Linux:**
+```bash
+sh setup-hooks.sh
+```
+
 ## Ejecutar tests
 
 ```bash
