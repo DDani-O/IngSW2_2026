@@ -1,60 +1,71 @@
-#!/bin/sh
-# Pre-commit hook — AutoBhan Autopartes
-# Corre linter y tests antes de cada commit.
-# Si alguno falla, el commit se cancela.
-# Trazabilidad: Plan SQA — Sección 8 (Frecuencia de medición)
+#!/usr/bin/env python3
+"""
+Pre-commit hook — AutoBhan Autopartes
+Corre flake8 y pytest antes de cada commit.
+Escrito en Python para compatibilidad con Windows, Mac y Linux.
+Trazabilidad: Plan SQA — Seccion 8 (Frecuencia de medicion)
+"""
 
-echo "=========================================="
-echo " AutoBhan — Pre-commit check"
-echo "=========================================="
+import subprocess
+import sys
+import os
+from pathlib import Path
 
-# Detectar el directorio raiz del repo
-ROOT=$(git rev-parse --show-toplevel)
-BACKEND="$ROOT/backend"
+ROOT = Path(__file__).resolve().parent.parent
+BACKEND = ROOT / "backend"
 
-# Verificar que existe el entorno virtual
-if [ ! -f "$BACKEND/venv/Scripts/python.exe" ] && [ ! -f "$BACKEND/venv/bin/python" ]; then
-    echo ""
-    echo "⚠  No se encontró el venv en backend/venv/"
-    echo "   Corré: cd backend && python -m venv venv && venv/Scripts/activate && python -m pip install -r requirements.txt"
-    echo ""
-    exit 1
-fi
+# Detectar python del venv segun OS
+VENV_PYTHON_WIN = BACKEND / "venv" / "Scripts" / "python.exe"
+VENV_PYTHON_UNIX = BACKEND / "venv" / "bin" / "python"
 
-# Detectar python del venv (Windows o Unix)
-if [ -f "$BACKEND/venv/Scripts/python.exe" ]; then
-    PYTHON="$BACKEND/venv/Scripts/python.exe"
-else
-    PYTHON="$BACKEND/venv/bin/python"
-fi
+if VENV_PYTHON_WIN.exists():
+    PYTHON = str(VENV_PYTHON_WIN)
+elif VENV_PYTHON_UNIX.exists():
+    PYTHON = str(VENV_PYTHON_UNIX)
+else:
+    print("\n==========================================")
+    print(" AutoBhan — Pre-commit check")
+    print("==========================================")
+    print("\n⚠  No se encontro el venv en backend/venv/")
+    print("   Corré:")
+    print("   cd backend")
+    print("   python -m venv venv")
+    print("   venv\\Scripts\\activate  (Windows)")
+    print("   python -m pip install -r requirements.txt")
+    print()
+    sys.exit(1)
 
-echo ""
-echo "▶ [1/2] Linter (flake8)..."
-cd "$BACKEND" && "$PYTHON" -m flake8 . --max-complexity=10 --exclude=venv,__pycache__
+print("\n==========================================")
+print(" AutoBhan — Pre-commit check")
+print("==========================================")
 
-if [ $? -ne 0 ]; then
-    echo ""
-    echo "✗ COMMIT CANCELADO — El linter reportó errores."
-    echo "  Corregí los errores de estilo antes de commitear."
-    echo ""
-    exit 1
-fi
-echo "✓ Linter OK — 0 errores"
+# 1. Linter
+print("\n▶ [1/2] Linter (flake8)...")
+result = subprocess.run(
+    [PYTHON, "-m", "flake8", ".", "--max-complexity=10",
+     "--exclude=venv,__pycache__"],
+    cwd=BACKEND
+)
+if result.returncode != 0:
+    print("\n✗ COMMIT CANCELADO — El linter reporto errores.")
+    print("  Corregi los errores antes de commitear.")
+    print()
+    sys.exit(1)
+print("✓ Linter OK — 0 errores")
 
-echo ""
-echo "▶ [2/2] Tests (pytest)..."
-cd "$BACKEND" && "$PYTHON" -m pytest --tb=short -q
+# 2. Tests
+print("\n▶ [2/2] Tests (pytest)...")
+result = subprocess.run(
+    [PYTHON, "-m", "pytest", "--tb=short", "-q"],
+    cwd=BACKEND
+)
+if result.returncode != 0:
+    print("\n✗ COMMIT CANCELADO — Hay tests fallando.")
+    print("  Todos los tests deben pasar antes de commitear.")
+    print()
+    sys.exit(1)
+print("✓ Tests OK")
 
-if [ $? -ne 0 ]; then
-    echo ""
-    echo "✗ COMMIT CANCELADO — Hay tests fallando."
-    echo "  Todos los tests deben pasar antes de commitear."
-    echo ""
-    exit 1
-fi
-echo "✓ Tests OK"
-
-echo ""
-echo "✓ Pre-commit check completo — procediendo con el commit."
-echo "=========================================="
-exit 0
+print("\n✓ Pre-commit check completo — procediendo con el commit.")
+print("==========================================\n")
+sys.exit(0)
