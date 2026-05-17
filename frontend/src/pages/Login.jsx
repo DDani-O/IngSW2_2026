@@ -1,14 +1,10 @@
 // pages/Login.jsx
 // Responsabilidad: pantalla de inicio de sesión del administrador.
-// Trazabilidad: REQ-NF02 (autenticación via Supabase Auth)
+// Llama a POST /auth/login en el backend — nunca habla directo con Supabase.
+// Trazabilidad: REQ-NF02
 
 import { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-);
+import { authService, setToken } from '../services/api';
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -20,16 +16,15 @@ export default function Login({ onLogin }) {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const { data, error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    setLoading(false);
-    if (authError) {
+    try {
+      const data = await authService.login(email, password);
+      setToken(data.access_token);
+      onLogin({ email: data.user_email, token: data.access_token });
+    } catch (err) {
       setError('Credenciales inválidas. Verificá tu email y contraseña.');
-      return;
+    } finally {
+      setLoading(false);
     }
-    onLogin(data.session);
   };
 
   return (

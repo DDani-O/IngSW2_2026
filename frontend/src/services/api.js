@@ -1,22 +1,43 @@
 // services/api.js
 // Responsabilidad: comunicación con el backend FastAPI.
-// Trazabilidad: REQ-F01, REQ-F02, REQ-F03, REQ-F04, REQ-F05
+// El frontend NUNCA habla directo con Supabase.
+// Todas las credenciales viven en el backend.
+// Trazabilidad: REQ-F01, REQ-F02, REQ-F03, REQ-F04, REQ-F05, REQ-NF02
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
+// Token JWT guardado en memoria (no en localStorage por seguridad)
+let _token = null;
+
+export const setToken = (token) => { _token = token; };
+export const clearToken = () => { _token = null; };
+export const getToken = () => _token;
+
 async function request(path, options = {}) {
-  const response = await fetch(`${BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  });
+  const headers = { 'Content-Type': 'application/json' };
+  if (_token) headers['Authorization'] = `Bearer ${_token}`;
+
+  const response = await fetch(`${BASE_URL}${path}`, { headers, ...options });
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: 'Error desconocido' }));
     throw new Error(error.detail || `HTTP ${response.status}`);
   }
+
+  if (response.status === 204) return null;
   return response.json();
 }
 
-// REQ-F01: gestión de repuestos
+// Auth — login y logout pasan por el backend (REQ-NF02)
+export const authService = {
+  login: (email, password) => request('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  }),
+  logout: () => request('/auth/logout', { method: 'POST' }),
+};
+
+// REQ-F01 y REQ-F04: gestión de repuestos
 export const repuestosService = {
   listar: (params = {}) => {
     const query = new URLSearchParams(params).toString();

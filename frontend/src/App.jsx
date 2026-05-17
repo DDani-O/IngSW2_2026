@@ -3,6 +3,7 @@
 // Trazabilidad: REQ-NF02
 
 import { useState } from 'react';
+import { clearToken } from './services/api';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Repuestos from './pages/Repuestos';
@@ -22,10 +23,15 @@ export default function App() {
     return <Login onLogin={setSession} />;
   }
 
+  const handleLogout = () => {
+    clearToken();
+    setSession(null);
+  };
+
   const renderPagina = () => {
     if (pagina === 'repuestos') return <Repuestos />;
     if (pagina === 'movimientos') return <Movimientos />;
-    return <Dashboard onLogout={() => setSession(null)} />;
+    return <Dashboard onLogout={handleLogout} />;
   };
 
   return (
@@ -41,7 +47,7 @@ export default function App() {
             {n.label}
           </button>
         ))}
-        <button style={styles.navBtnLogout} onClick={() => setSession(null)}>
+        <button style={styles.navBtnLogout} onClick={handleLogout}>
           Cerrar sesión
         </button>
       </nav>

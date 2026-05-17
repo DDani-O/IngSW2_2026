@@ -12,6 +12,7 @@
 | REQ-F05 | Listar repuestos en stock crítico (stock ≤ mínimo) | `routers/alertas.py` | `listar_stock_critico()` | TC-014, TC-015, TC-016 | Verificado |
 | REQ-NF01 | Consulta de stock < 2 seg con 500 repuestos | `main.py` | `healthcheck()` | TC-017 | Implementado |
 | REQ-NF02 | Persistencia en base de datos relacional | `db/supabase_client.py` | `get_client()` | — | Implementado |
+| REQ-NF02 | Login/logout admin via backend (no Supabase directo) | `routers/auth.py` | `login()`, `logout()` | TC-018, TC-019, TC-020, TC-021 | Verificado |
 
 ## Schemas (validación Pydantic)
 
@@ -53,6 +54,10 @@
 | TC-015 | REQ-F05 | Stock crítico incluye stock == mínimo | Valor límite |
 | TC-016 | REQ-F05 | Stock crítico vacío si todos tienen stock OK | Caja negra |
 | TC-017 | REQ-NF01 | Health check responde 200 con status ok | Caja blanca |
+| TC-018 | REQ-NF02 | Login con credenciales válidas → 200 + token JWT | Caja negra |
+| TC-019 | REQ-NF02 | Login con credenciales inválidas → 401 | Caja negra |
+| TC-020 | REQ-NF02 | Login con email malformado → 422 | Valor límite |
+| TC-021 | REQ-NF02 | Logout → 204 sin contenido | Caja negra |
 
 ## Estado de gaps
 
