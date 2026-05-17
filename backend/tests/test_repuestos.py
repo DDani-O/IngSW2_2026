@@ -13,16 +13,31 @@ client = TestClient(app)
 TEST_NUMERO_SERIE = "TEST-REP-9991"
 
 
+def _limpiar_test_data():
+    """Elimina repuestos y movimientos de test de la BD."""
+    from db.supabase_client import supabase
+    ids = supabase.table("repuestos").select("id").eq(
+        "numero_serie", TEST_NUMERO_SERIE
+    ).execute()
+    for row in ids.data:
+        supabase.table("movimientos").delete().eq(
+            "repuesto_id", row["id"]
+        ).execute()
+    supabase.table("repuestos").delete().eq(
+        "numero_serie", TEST_NUMERO_SERIE
+    ).execute()
+
+
 @pytest.fixture(autouse=True)
 def limpiar_repuesto_test():
-    """Elimina el repuesto de test antes y después de cada test."""
-    from db.supabase_client import supabase
-    supabase.table("repuestos").delete().eq("numero_serie", TEST_NUMERO_SERIE).execute()
+    """Limpia datos de test antes Y después de cada test."""
+    _limpiar_test_data()
     yield
-    supabase.table("repuestos").delete().eq("numero_serie", TEST_NUMERO_SERIE).execute()
+    _limpiar_test_data()
 
 
 # ── REQ-F01 ──────────────────────────────────────────────────────────────────
+
 
 @pytest.mark.REQ_F01
 def test_crear_repuesto_exitoso():
@@ -94,6 +109,7 @@ def test_obtener_repuesto_no_encontrado():
 
 
 # ── REQ-F04 ──────────────────────────────────────────────────────────────────
+
 
 @pytest.mark.REQ_F04
 def test_listar_repuestos_sin_filtro():
