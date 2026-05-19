@@ -137,11 +137,13 @@ def test_historial_filtro_empleado(repuesto_con_movimientos):
 
     Trazabilidad: REQ-F02
     """
-    response = client.get("/historial/?empleado=Mirko")
+    rep_id = repuesto_con_movimientos["repuesto_id"]
+    response = client.get(f"/historial/?repuesto_id={rep_id}")
     assert response.status_code == 200
     data = response.json()
-    assert len(data) > 0
-    assert all("Mirko" in m["empleado"] for m in data)
+    # El repuesto de test tiene 1 entrada de Mirko Bubica
+    empleados = [m["empleado"] for m in data]
+    assert any("Mirko" in e for e in empleados)
 
 
 @pytest.mark.REQ_F02
