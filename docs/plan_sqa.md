@@ -57,7 +57,6 @@ Asegurar que el sistema AutoBhan cumpla los requerimientos definidos (REQ-F01 a 
 | MI mínimo por módulo | ≥ 40 | `radon mi . -s` |
 | Cobertura de tests | ≥ 60% | `pytest --cov` |
 | Errores críticos linter | 0 | `flake8 --max-complexity=10` |
-| Issues críticos abiertos | 0 | GitHub Issues |
 
 ## 7. Herramientas
 
@@ -67,7 +66,6 @@ Asegurar que el sistema AutoBhan cumpla los requerimientos definidos (REQ-F01 a 
 | Linter frontend | ESLint (Airbnb) |
 | Tests + cobertura | pytest + pytest-cov |
 | Métricas CC/MI | radon |
-| Defectos | GitHub Issues |
 | Versiones | Git + GitHub |
 
 ## 8. Frecuencia de medición
