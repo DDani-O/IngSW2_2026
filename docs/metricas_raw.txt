@@ -1,0 +1,252 @@
+main.py
+    LOC: 48
+    LLOC: 20
+    SLOC: 27
+    Comments: 2
+    Single comments: 2
+    Multi: 10
+    Blank: 9
+    - Comment Stats
+        (C % L): 4%
+        (C % S): 7%
+        (C + M % L): 25%
+schemas/__init__.py
+    LOC: 0
+    LLOC: 0
+    SLOC: 0
+    Comments: 0
+    Single comments: 0
+    Multi: 0
+    Blank: 0
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+schemas/repuesto.py
+    LOC: 65
+    LLOC: 53
+    SLOC: 30
+    Comments: 0
+    Single comments: 1
+    Multi: 17
+    Blank: 17
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 26%
+schemas/movimiento.py
+    LOC: 62
+    LLOC: 47
+    SLOC: 27
+    Comments: 0
+    Single comments: 1
+    Multi: 17
+    Blank: 17
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 27%
+models/__init__.py
+    LOC: 0
+    LLOC: 0
+    SLOC: 0
+    Comments: 0
+    Single comments: 0
+    Multi: 0
+    Blank: 0
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+tests/test_repuestos.py
+    LOC: 148
+    LLOC: 74
+    SLOC: 87
+    Comments: 2
+    Single comments: 4
+    Multi: 33
+    Blank: 24
+    - Comment Stats
+        (C % L): 1%
+        (C % S): 2%
+        (C + M % L): 24%
+tests/test_historial.py
+    LOC: 210
+    LLOC: 113
+    SLOC: 120
+    Comments: 1
+    Single comments: 1
+    Multi: 49
+    Blank: 40
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 1%
+        (C + M % L): 24%
+tests/conftest.py
+    LOC: 38
+    LLOC: 26
+    SLOC: 23
+    Comments: 0
+    Single comments: 2
+    Multi: 6
+    Blank: 7
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 16%
+tests/__init__.py
+    LOC: 0
+    LLOC: 0
+    SLOC: 0
+    Comments: 0
+    Single comments: 0
+    Multi: 0
+    Blank: 0
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+tests/test_stock.py
+    LOC: 150
+    LLOC: 72
+    SLOC: 94
+    Comments: 9
+    Single comments: 8
+    Multi: 29
+    Blank: 19
+    - Comment Stats
+        (C % L): 6%
+        (C % S): 10%
+        (C + M % L): 25%
+tests/test_alertas.py
+    LOC: 67
+    LLOC: 34
+    SLOC: 29
+    Comments: 5
+    Single comments: 5
+    Multi: 21
+    Blank: 12
+    - Comment Stats
+        (C % L): 7%
+        (C % S): 17%
+        (C + M % L): 39%
+tests/test_auth.py
+    LOC: 92
+    LLOC: 55
+    SLOC: 55
+    Comments: 1
+    Single comments: 2
+    Multi: 22
+    Blank: 13
+    - Comment Stats
+        (C % L): 1%
+        (C % S): 2%
+        (C + M % L): 25%
+db/__init__.py
+    LOC: 0
+    LLOC: 0
+    SLOC: 0
+    Comments: 0
+    Single comments: 0
+    Multi: 0
+    Blank: 0
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+db/supabase_client.py
+    LOC: 29
+    LLOC: 14
+    SLOC: 13
+    Comments: 0
+    Single comments: 0
+    Multi: 9
+    Blank: 7
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 31%
+routers/historial.py
+    LOC: 156
+    LLOC: 79
+    SLOC: 107
+    Comments: 2
+    Single comments: 3
+    Multi: 19
+    Blank: 27
+    - Comment Stats
+        (C % L): 1%
+        (C % S): 2%
+        (C + M % L): 13%
+routers/auth.py
+    LOC: 69
+    LLOC: 39
+    SLOC: 33
+    Comments: 0
+    Single comments: 3
+    Multi: 15
+    Blank: 18
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 22%
+routers/__init__.py
+    LOC: 0
+    LLOC: 0
+    SLOC: 0
+    Comments: 0
+    Single comments: 0
+    Multi: 0
+    Blank: 0
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+routers/alertas.py
+    LOC: 35
+    LLOC: 16
+    SLOC: 16
+    Comments: 0
+    Single comments: 1
+    Multi: 10
+    Blank: 8
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 29%
+routers/repuestos.py
+    LOC: 88
+    LLOC: 50
+    SLOC: 46
+    Comments: 0
+    Single comments: 1
+    Multi: 21
+    Blank: 20
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 24%
+routers/stock.py
+    LOC: 102
+    LLOC: 45
+    SLOC: 64
+    Comments: 0
+    Single comments: 1
+    Multi: 19
+    Blank: 18
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 19%
+** Total **
+    LOC: 1359
+    LLOC: 737
+    SLOC: 771
+    Comments: 22
+    Single comments: 35
+    Multi: 297
+    Blank: 256
+    - Comment Stats
+        (C % L): 2%
+        (C % S): 3%
+        (C + M % L): 23%

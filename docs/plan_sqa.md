@@ -20,9 +20,9 @@ Asegurar que el sistema AutoBhan cumpla los requerimientos definidos (REQ-F01 a 
 
 | Rol | Persona |
 |-----|---------|
-| QA — revisiones y estándares | Bubica Hundt, Mirko |
+| QA — revisiones y estándares + Referente | Bubica Hundt, Mirko |
 | QC — testing y defectos | Nuñez, Celeste Aylen |
-| Documentador + Referente | Olguin, Daniel David |
+| Documentador | Olguin, Daniel David |
 
 ## 4. Estándares y convenciones
 

@@ -1,0 +1,85 @@
+main.py
+    F 42:0 healthcheck - A (1)
+schemas/repuesto.py
+    C 12:0 Categoria - A (1)
+    C 20:0 RepuestoCreate - A (1)
+    C 36:0 RepuestoResponse - A (1)
+    C 56:0 RepuestoUpdate - A (1)
+schemas/movimiento.py
+    C 13:0 TipoMovimiento - A (1)
+    C 20:0 EntradaStockCreate - A (1)
+    C 34:0 SalidaStockCreate - A (1)
+    C 47:0 MovimientoResponse - A (1)
+tests/test_repuestos.py
+    F 37:0 test_crear_repuesto_exitoso - A (5)
+    F 113:0 test_listar_repuestos_sin_filtro - A (4)
+    F 126:0 test_listar_repuestos_filtro_categoria_auto - A (4)
+    F 139:0 test_listar_repuestos_filtro_categoria_moto - A (4)
+    F 20:0 _limpiar - A (2)
+    F 64:0 test_crear_repuesto_precio_negativo - A (2)
+    F 82:0 test_crear_repuesto_categoria_invalida - A (2)
+    F 100:0 test_obtener_repuesto_no_encontrado - A (2)
+    F 15:0 _get_serie - A (1)
+tests/test_historial.py
+    F 68:0 test_historial_retorna_lista - C (12)
+    F 149:0 test_historial_por_repuesto - B (8)
+    F 182:0 test_historial_datos_entrada - B (7)
+    F 198:0 test_historial_datos_salida - B (7)
+    F 119:0 test_historial_filtro_repuesto - A (4)
+    F 134:0 test_historial_filtro_empleado - A (4)
+    F 92:0 test_historial_filtro_tipo_entrada - A (3)
+    F 105:0 test_historial_filtro_tipo_salida - A (3)
+    F 171:0 test_historial_repuesto_no_encontrado - A (2)
+    F 16:0 repuesto_con_movimientos - A (1)
+tests/conftest.py
+    F 13:0 make_supabase_mock - A (2)
+    F 32:0 cliente_api - A (1)
+tests/test_stock.py
+    F 41:0 test_registrar_entrada_exitosa - A (4)
+    F 96:0 test_registrar_salida_exitosa - A (4)
+    F 117:0 test_registrar_salida_stock_insuficiente - A (3)
+    F 134:0 test_registrar_salida_stock_exacto - A (3)
+    F 62:0 test_registrar_entrada_cantidad_cero - A (2)
+    F 78:0 test_registrar_entrada_repuesto_inexistente - A (2)
+    F 17:0 repuesto_test - A (1)
+tests/test_alertas.py
+    F 17:0 test_stock_critico_retorna_solo_criticos - A (5)
+    F 32:0 test_stock_critico_incluye_limite_exacto - A (4)
+    F 45:0 test_stock_critico_no_incluye_stock_suficiente - A (4)
+    F 60:0 test_healthcheck - A (3)
+tests/test_auth.py
+    F 36:0 test_login_exitoso - A (5)
+    F 16:0 make_auth_mock - A (3)
+    F 55:0 test_login_credenciales_invalidas - A (3)
+    F 71:0 test_login_email_invalido - A (2)
+    F 84:0 test_logout_exitoso - A (2)
+db/supabase_client.py
+    F 14:0 get_client - A (3)
+routers/historial.py
+    F 46:0 listar_historial - C (11)
+    F 117:0 historial_por_repuesto - A (3)
+    F 39:0 _get_db - A (1)
+    C 16:0 MovimientoDetalle - A (1)
+routers/auth.py
+    F 36:0 login - A (3)
+    F 29:0 _get_db - A (1)
+    F 62:0 logout - A (1)
+    C 14:0 LoginRequest - A (1)
+    C 21:0 LoginResponse - A (1)
+routers/alertas.py
+    F 21:0 listar_stock_critico - A (3)
+    F 14:0 _get_db - A (1)
+routers/repuestos.py
+    F 74:0 actualizar_repuesto - A (5)
+    F 38:0 listar_repuestos - A (3)
+    F 21:0 crear_repuesto - A (2)
+    F 60:0 obtener_repuesto - A (2)
+    F 14:0 _get_db - A (1)
+routers/stock.py
+    F 37:0 registrar_entrada - A (3)
+    F 67:0 registrar_salida - A (3)
+    F 24:0 _obtener_repuesto - A (2)
+    F 18:0 _get_db - A (1)
+
+67 blocks (classes, functions, methods) analyzed.
+Average complexity: A (2.8507462686567164)
