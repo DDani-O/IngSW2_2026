@@ -8,7 +8,6 @@
 | Nombre | Gestión de AutoBhan Autopartes |
 | Grupo | 6 |
 | Integrantes | Bubica Hundt, Mirko · Nuñez, Celeste Aylen · Olguin, Daniel David |
-| Referente | Olguin, Daniel David |
 | Repositorio | https://github.com/DDani-O/IngSW2_2026 |
 | Versión | 1.0 — 20/05/2026 |
 
