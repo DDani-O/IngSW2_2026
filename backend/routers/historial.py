@@ -42,6 +42,62 @@ def _get_db():
     return supabase
 
 
+def _aplicar_filtros(query, tipo, repuesto_id, empleado, fecha_desde, fecha_hasta):
+    """
+    Aplica filtros opcionales a una query de movimientos.
+
+    Trazabilidad: REQ-F02, REQ-F03
+    """
+    if tipo:
+        query = query.eq("tipo", tipo)
+    if repuesto_id:
+        query = query.eq("repuesto_id", repuesto_id)
+    if empleado:
+        query = query.ilike("empleado", f"%{empleado}%")
+    if fecha_desde:
+        query = query.gte("fecha", str(fecha_desde))
+    if fecha_hasta:
+        query = query.lte("fecha", str(fecha_hasta))
+    return query
+
+
+def _construir_detalle(m: dict, rep: dict) -> MovimientoDetalle:
+    """
+    Construye un MovimientoDetalle combinando un movimiento y su repuesto.
+
+    Trazabilidad: REQ-F02, REQ-F03
+    """
+    return MovimientoDetalle(
+        id=m["id"],
+        tipo=m["tipo"],
+        cantidad=m["cantidad"],
+        empleado=m["empleado"],
+        proveedor=m.get("proveedor"),
+        finalidad=m.get("finalidad"),
+        fecha=m["fecha"],
+        created_at=m["created_at"],
+        repuesto_id=rep["id"],
+        repuesto_nombre=rep["nombre"],
+        repuesto_categoria=rep["categoria"],
+        repuesto_marca=rep["marca"],
+        repuesto_numero_serie=rep["numero_serie"],
+        stock_actual=rep["stock_actual"],
+    )
+
+
+def _obtener_repuestos_map(db, movimientos: list) -> dict:
+    """
+    Obtiene un mapa id->repuesto para los repuestos de una lista de movimientos.
+
+    Trazabilidad: REQ-F02, REQ-F03
+    """
+    ids = list({m["repuesto_id"] for m in movimientos})
+    resultado = db.table("repuestos").select(
+        "id, nombre, categoria, marca, numero_serie, stock_actual"
+    ).in_("id", ids).execute()
+    return {r["id"]: r for r in resultado.data}
+
+
 @router.get("/", response_model=List[MovimientoDetalle])
 def listar_historial(
     tipo: Optional[str] = Query(default=None, description="entrada o salida"),
@@ -58,59 +114,21 @@ def listar_historial(
     Trazabilidad: REQ-F02, REQ-F03
     """
     db = _get_db()
-
-    # Traer movimientos con filtros
     query = db.table("movimientos").select("*").order(
         "created_at", desc=True
     ).limit(limite)
-
-    if tipo:
-        query = query.eq("tipo", tipo)
-    if repuesto_id:
-        query = query.eq("repuesto_id", repuesto_id)
-    if empleado:
-        query = query.ilike("empleado", f"%{empleado}%")
-    if fecha_desde:
-        query = query.gte("fecha", str(fecha_desde))
-    if fecha_hasta:
-        query = query.lte("fecha", str(fecha_hasta))
-
+    query = _aplicar_filtros(query, tipo, repuesto_id, empleado, fecha_desde, fecha_hasta)
     movimientos = query.execute().data
 
     if not movimientos:
         return []
 
-    # Obtener IDs únicos de repuestos para hacer una sola consulta
-    ids = list({m["repuesto_id"] for m in movimientos})
-    repuestos_result = db.table("repuestos").select(
-        "id, nombre, categoria, marca, numero_serie, stock_actual"
-    ).in_("id", ids).execute()
-
-    repuestos_map = {r["id"]: r for r in repuestos_result.data}
-
-    resultado = []
-    for m in movimientos:
-        rep = repuestos_map.get(m["repuesto_id"])
-        if not rep:
-            continue
-        resultado.append(MovimientoDetalle(
-            id=m["id"],
-            tipo=m["tipo"],
-            cantidad=m["cantidad"],
-            empleado=m["empleado"],
-            proveedor=m.get("proveedor"),
-            finalidad=m.get("finalidad"),
-            fecha=m["fecha"],
-            created_at=m["created_at"],
-            repuesto_id=m["repuesto_id"],
-            repuesto_nombre=rep["nombre"],
-            repuesto_categoria=rep["categoria"],
-            repuesto_marca=rep["marca"],
-            repuesto_numero_serie=rep["numero_serie"],
-            stock_actual=rep["stock_actual"],
-        ))
-
-    return resultado
+    repuestos_map = _obtener_repuestos_map(db, movimientos)
+    return [
+        _construir_detalle(m, repuestos_map[m["repuesto_id"]])
+        for m in movimientos
+        if m["repuesto_id"] in repuestos_map
+    ]
 
 
 @router.get("/{repuesto_id}", response_model=List[MovimientoDetalle])
@@ -121,7 +139,6 @@ def historial_por_repuesto(repuesto_id: int):
     Trazabilidad: REQ-F02, REQ-F03
     """
     db = _get_db()
-
     repuesto = db.table("repuestos").select(
         "id, nombre, categoria, marca, numero_serie, stock_actual"
     ).eq("id", repuesto_id).execute()
@@ -130,27 +147,8 @@ def historial_por_repuesto(repuesto_id: int):
         raise HTTPException(status_code=404, detail="Repuesto no encontrado")
 
     rep = repuesto.data[0]
-
     movimientos = db.table("movimientos").select("*").eq(
         "repuesto_id", repuesto_id
     ).order("created_at", desc=True).execute().data
 
-    return [
-        MovimientoDetalle(
-            id=m["id"],
-            tipo=m["tipo"],
-            cantidad=m["cantidad"],
-            empleado=m["empleado"],
-            proveedor=m.get("proveedor"),
-            finalidad=m.get("finalidad"),
-            fecha=m["fecha"],
-            created_at=m["created_at"],
-            repuesto_id=rep["id"],
-            repuesto_nombre=rep["nombre"],
-            repuesto_categoria=rep["categoria"],
-            repuesto_marca=rep["marca"],
-            repuesto_numero_serie=rep["numero_serie"],
-            stock_actual=rep["stock_actual"],
-        )
-        for m in movimientos
-    ]
+    return [_construir_detalle(m, rep) for m in movimientos]
