@@ -14,7 +14,6 @@
 | DEF-002 | Mayor | Tests de historial fallan por ilike intermitente en Supabase | tests/test_historial.py | Resuelto |
 | DEF-003 | Mayor | Duplicate key en test_crear_repuesto_exitoso al reusar numero_serie | tests/test_repuestos.py | Resuelto |
 | DEF-004 | Mayor | CC de listar_historial = 11 supera umbral del Plan SQA (≤10) | routers/historial.py | Resuelto |
-| DEF-005 | Menor | .env.example del frontend expone variables de Supabase al cliente | frontend/.env.example | Resuelto |
 | DEF-006 | Menor | supabase_client.py falla al importar si no existe .env (conexión eager) | db/supabase_client.py | Resuelto |
 | DEF-007 | Cosmético | Errores E302 y F401 en test_alertas.py detectados por flake8 | tests/test_alertas.py | Resuelto |
 
@@ -69,17 +68,6 @@ radon cc routers/historial.py -s
 
 ---
 
-### DEF-005 — Variables de Supabase expuestas en frontend
-**Severidad:** Menor
-**Descripción:** El `.env.example` del frontend incluía `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`. Las variables `VITE_` en React/Vite quedan embebidas en el bundle y son visibles en el navegador.
-**Pasos para reproducir:**
-1. Buildear el frontend con `npm run build`
-2. Abrir el bundle JS en un editor — las credenciales son visibles en texto plano
-**Fix aplicado:** El frontend solo tiene `VITE_API_URL`. Toda comunicación con Supabase pasa por el backend (FastAPI), que mantiene las credenciales en el `.env` del servidor.
-**Commit:** `[REQ-NF02] Centraliza auth en backend - elimina Supabase del frontend`
-
----
-
 ### DEF-006 — supabase_client.py falla al importar sin .env
 **Severidad:** Menor
 **Descripción:** La línea `supabase: Client = get_client()` al final del módulo ejecutaba la conexión en el momento de importar. Si no existía `.env`, cualquier import del módulo fallaba con `ValueError` antes de llegar al test.
@@ -113,9 +101,9 @@ flake8 tests/test_alertas.py --max-complexity=10
 |-----------|----------|-----------|---------|
 | Crítico | 0 | — | 0 |
 | Mayor | 4 | 4 | 0 |
-| Menor | 2 | 2 | 0 |
+| Menor | 1 | 1 | 0 |
 | Cosmético | 1 | 1 | 0 |
-| **Total** | **7** | **7** | **0** |
+| **Total** | **6** | **6** | **0** |
 
-**Densidad de defectos:** 7 defectos / 1.7 KLOC ≈ 4.1 defectos/KLOC
+**Densidad de defectos:** 6 defectos / 1.7 KLOC ≈ 3.5 defectos/KLOC
 (meta industria: < 5 defectos/KLOC en módulos críticos ✅)

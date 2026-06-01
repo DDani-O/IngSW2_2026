@@ -14,7 +14,7 @@ client = TestClient(app)
 
 def _get_serie():
     """Genera numero de serie unico por timestamp para evitar conflictos."""
-    return f"TEST-{int(time.time())}"
+    return f"TEST-{int(time.time() * 1000)}"
 
 
 def _limpiar(serie):
