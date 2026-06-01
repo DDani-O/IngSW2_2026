@@ -146,3 +146,75 @@ def test_listar_repuestos_filtro_categoria_moto():
     data = response.json()
     assert len(data) > 0
     assert all(r["categoria"] == "moto" for r in data)
+
+
+@pytest.mark.REQ_F01
+def test_actualizar_repuesto_exitoso():
+    """
+    TC-031: PATCH /repuestos/{id} actualiza precio y stock_minimo correctamente.
+
+    Trazabilidad: REQ-F01
+    """
+    from db.supabase_client import supabase
+    serie = _get_serie()
+    try:
+        rep = supabase.table("repuestos").insert({
+            "nombre": "Repuesto Update Test",
+            "categoria": "auto",
+            "marca": "TestBrand",
+            "numero_serie": serie,
+            "precio": 1000.0,
+            "stock_actual": 5,
+            "stock_minimo": 2,
+        }).execute()
+        rep_id = rep.data[0]["id"]
+
+        response = client.patch(f"/repuestos/{rep_id}", json={
+            "precio": 2500.0,
+            "stock_minimo": 4,
+        })
+        assert response.status_code == 200
+        data = response.json()
+        assert data["precio"] == 2500.0
+        assert data["stock_minimo"] == 4
+        assert data["nombre"] == "Repuesto Update Test"
+    finally:
+        _limpiar(serie)
+
+
+@pytest.mark.REQ_F01
+def test_actualizar_repuesto_sin_datos():
+    """
+    TC-032: PATCH /repuestos/{id} sin campos retorna 400.
+
+    Trazabilidad: REQ-F01
+    """
+    from db.supabase_client import supabase
+    serie = _get_serie()
+    try:
+        rep = supabase.table("repuestos").insert({
+            "nombre": "Repuesto Update Test 2",
+            "categoria": "moto",
+            "marca": "TestBrand",
+            "numero_serie": serie,
+            "precio": 500.0,
+            "stock_actual": 3,
+            "stock_minimo": 1,
+        }).execute()
+        rep_id = rep.data[0]["id"]
+
+        response = client.patch(f"/repuestos/{rep_id}", json={})
+        assert response.status_code == 400
+    finally:
+        _limpiar(serie)
+
+
+@pytest.mark.REQ_F01
+def test_actualizar_repuesto_precio_invalido():
+    """
+    TC-033: PATCH /repuestos/{id} con precio <= 0 retorna 422 (valor limite).
+
+    Trazabilidad: REQ-F01
+    """
+    response = client.patch("/repuestos/1", json={"precio": -50.0})
+    assert response.status_code == 422
