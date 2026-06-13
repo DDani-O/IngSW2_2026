@@ -145,7 +145,7 @@ export default function Repuestos() {
                 <td style={styles.td}>{r.marca}</td>
                 <td style={styles.td}>{r.numero_serie}</td>
                 <td style={styles.td}>${r.precio.toLocaleString()}</td>
-                <td style={{ ...styles.td, color: r.stock_actual <= r.stock_minimo ? '#dc2626' : '#16a34a', fontWeight: 'bold' }}>
+                <td style={{ ...styles.td, color: r.stock_actual <= r.stock_minimo ? '#dc2626' : 'inherit', fontWeight: r.stock_actual <= r.stock_minimo ? 'bold' : 'normal' }}>
                   {r.stock_actual}
                 </td>
                 <td style={styles.td}>{r.stock_minimo}</td>
