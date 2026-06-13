@@ -24,10 +24,3 @@
 
 ---
 
-## Requerimientos de Restricción
-
-| ID | Descripción |
-|----|-------------|
-| REQ-R01 | LOC objetivo: entre 800 y 3000 líneas de código (sin contar dependencias). |
-| REQ-R02 | El docente debe poder ejecutar el proyecto siguiendo el README sin consultas adicionales. |
-| REQ-R03 | El repositorio debe ser público en GitHub con al menos 10 commits descriptivos con formato `[REQ-FXX] Descripción`. |
