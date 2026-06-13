@@ -65,3 +65,28 @@ def test_healthcheck():
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
+
+
+@pytest.mark.REQ_NF01
+def test_consulta_repuestos_con_500_o_mas_responde_bajo_2_segundos():
+    """
+    TC-NF01-001: GET /repuestos/ responde en menos de 2 segundos
+    con al menos 500 repuestos cargados en la base de datos.
+
+    Trazabilidad: REQ-NF01
+    """
+    import time
+
+    start = time.perf_counter()
+    response = client.get("/repuestos/")
+    elapsed = time.perf_counter() - start
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) >= 500, (
+        f"Se requieren >= 500 repuestos para validar REQ-NF01, "
+        f"hay {len(data)}"
+    )
+    assert elapsed < 2.0, (
+        f"La consulta tardo {elapsed:.4f}s, supera el umbral de 2s de REQ-NF01"
+    )

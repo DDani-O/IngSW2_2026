@@ -1,5 +1,5 @@
 # Matriz de Trazabilidad de Requerimientos (RTM)
-**AutoBhan Autopartes — Grupo 6 — v2.0 — 03/06/2026**
+**AutoBhan Autopartes — Grupo 6 — v2.1 — 13/06/2026**
 
 La RTM vincula cada requerimiento con su módulo de código, sus tests y su estado.
 Una fila sin código = no implementado. Una fila sin tests = no verificado.
@@ -15,7 +15,7 @@ Una fila sin código = no implementado. Una fila sin tests = no verificado.
 | REQ-F03 | Registrar salida e impedir stock negativo | `routers/stock.py` | `registrar_salida()` | TC-CN-013…016, TC-CB-001, TC-CB-002 | Verificado |
 | REQ-F04 | Consultar stock con filtros por categoría y nombre | `routers/repuestos.py` | `listar_repuestos()` | TC-CN-017…020 | Verificado |
 | REQ-F05 | Listar repuestos en stock crítico (stock ≤ mínimo) | `routers/alertas.py` | `listar_stock_critico()` | TC-CN-021…023, TC-CB-003, TC-CB-004 | Verificado |
-| REQ-NF01 | Consulta < 2 seg con 500 repuestos | `main.py` | `healthcheck()` | TC-CN-024 | Implementado |
+| REQ-NF01 | Consulta < 2 seg con 500 repuestos | `main.py`, `routers/repuestos.py` | `healthcheck()`, `listar_repuestos()` | TC-CN-024, TC-NF01-001 | Verificado |
 | REQ-NF02 | Persistencia BD + login admin vía backend | `routers/auth.py` `db/supabase_client.py` | `login()` `logout()` `get_client()` | TC-CN-025…028, TC-CB-007 | Verificado |
 
 ---
@@ -95,6 +95,4 @@ Una fila sin código = no implementado. Una fila sin tests = no verificado.
 
 ## 5. Gaps identificados
 
-| REQ | Situación | Prioridad |
-|-----|-----------|-----------|
-| REQ-NF01 | Test de rendimiento real con 500 repuestos pendiente | Media — Hito 5 |
+No hay gaps abiertos. El último gap (REQ-NF01 — test de rendimiento real con 500 repuestos) fue resuelto el 13/06/2026: se generaron 279 repuestos adicionales (series `SEED-AU/MO/CA-XXXX`) y 150 movimientos asociados, alcanzando 562 repuestos y 612 movimientos en la base de datos real de Supabase. El test `TC-NF01-001` verifica que `GET /repuestos/` con 562 repuestos responde en ~0.19s promedio (máx. 0.21s), muy por debajo del umbral de 2 segundos.
