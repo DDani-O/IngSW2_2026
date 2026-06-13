@@ -238,3 +238,15 @@ routers/stock.py
         (C % L): 0%
         (C % S): 0%
         (C + M % L): 19%
+** Total **
+    LOC: 1431
+    LLOC: 779
+    SLOC: 808
+    Comments: 21
+    Single comments: 34
+    Multi: 321
+    Blank: 268
+    - Comment Stats
+        (C % L): 1%
+        (C % S): 3%
+        (C + M % L): 24%
