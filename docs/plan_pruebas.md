@@ -45,7 +45,7 @@
 
 | Criterio | Umbral | Estado |
 |----------|--------|--------|
-| Tests pasando | 100% | ✅ 33/33 |
+| Tests pasando | 100% | ✅ 34/34 |
 | Cobertura módulos principales | ≥ 60% | ✅ 95% |
 | Errores de linter | 0 | ✅ 0 |
 | CC máximo por función | ≤ 10 | ✅ máx 6 |
@@ -201,4 +201,4 @@ Casos de borde:
 | routers/alertas.py | 100% | TC-CN-021…023, TC-CB-003…004 |
 | routers/auth.py | 85% | TC-CN-025…028, TC-CB-007 |
 | routers/historial.py | 93% | (tests de historial) |
-| **TOTAL** | **95%** | **33 tests automatizados** |
+| **TOTAL** | **95%** | **34 tests automatizados** |

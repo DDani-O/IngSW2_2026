@@ -1,5 +1,5 @@
 # Plan SQA — AutoBhan Autopartes
-**Grupo 6 · Ingeniería de Software II · IUA 2026 · v1.0 · 20/05/2026**
+**Grupo 6 · Ingeniería de Software II · IUA 2026 · v2.0 · 13/06/2026**
 
 ## 1. Datos del proyecto
 
@@ -9,7 +9,7 @@
 | Grupo | 6 |
 | Integrantes | Bubica Hundt, Mirko · Nuñez, Celeste Aylen · Olguin, Daniel David |
 | Repositorio | https://github.com/DDani-O/IngSW2_2026 |
-| Versión | 1.0 — 20/05/2026 |
+| Versión | 2.0 — 13/06/2026 |
 
 ## 2. Propósito
 
@@ -84,20 +84,7 @@ Asegurar que el sistema AutoBhan cumpla los requerimientos definidos (REQ-F01 a 
 - No se mergea si hay issues críticos abiertos
 - Cerrar con `Closes #N` en el commit
 
-## 10. Criterios de aceptación — Hito 5
-
-| Criterio | Umbral | OK |
-|----------|--------|----|
-| Tests pasan al 100% | 0 fallando | [ ] |
-| Cobertura | ≥ 60% | [ ] |
-| Issues críticos | 0 abiertos | [ ] |
-| RTM completa | REQ-F01..F05 + NF01/NF02 | [ ] |
-| README ejecutable | El docente puede correrlo | [ ] |
-| Plan SQA actualizado | Versión final | [ ] |
-| Plan de pruebas | ≥ 15 casos | [ ] |
-| Wireframes | ≥ 3 baja + 2 alta fidelidad | [ ] |
-
-## 11. Riesgos
+## 10. Riesgos
 
 | Riesgo | Prob. | Mitigación |
 |--------|-------|-----------|
@@ -106,7 +93,7 @@ Asegurar que el sistema AutoBhan cumpla los requerimientos definidos (REQ-F01 a 
 | CORS mal configurado | Alta | CORSMiddleware desde el primer commit |
 | Conflictos de .env | Media | .env.example + README con setup paso a paso |
 
-## 12. Cronograma
+## 11. Cronograma
 
 | Fecha | Tarea |
 |-------|-------|

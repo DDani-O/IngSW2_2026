@@ -93,7 +93,7 @@ Checklist antes de mergear a `main`:
 | Paso | Herramienta | Umbral | Resultado |
 |------|------------|--------|-----------|
 | Linter | flake8 | 0 errores | ✅ 0 errores |
-| Tests | pytest | 100% passing | ✅ 33/33 |
+| Tests | pytest | 100% passing | ✅ 34/34 |
 | Cobertura | pytest-cov | ≥ 60% | ✅ 95% |
 | CC máximo | radon cc | ≤ 10 | ✅ 6 |
 | MI mínimo | radon mi | ≥ 40 | ✅ 74.73 |
