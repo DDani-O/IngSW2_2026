@@ -93,6 +93,119 @@ radon mi . -s       # Maintainability Index
 radon raw . -s      # Líneas de código
 ```
 
+## Ejemplos de uso de la API
+
+Con el backend corriendo en `http://localhost:8000` (también disponible en `/docs` con Swagger):
+
+### Crear un repuesto — REQ-F01
+
+```bash
+curl -X POST http://localhost:8000/repuestos/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre": "Filtro de aceite",
+    "categoria": "auto",
+    "marca": "Bosch",
+    "numero_serie": "BO-FA-001",
+    "precio": 1500,
+    "stock_inicial": 12,
+    "stock_minimo": 5
+  }'
+```
+
+Respuesta `201 Created`:
+```json
+{
+  "id": 1,
+  "nombre": "Filtro de aceite",
+  "categoria": "auto",
+  "marca": "Bosch",
+  "numero_serie": "BO-FA-001",
+  "precio": 1500.0,
+  "stock_actual": 12,
+  "stock_minimo": 5
+}
+```
+
+### Registrar entrada de stock — REQ-F02
+
+```bash
+curl -X POST http://localhost:8000/stock/entrada \
+  -H "Content-Type: application/json" \
+  -d '{
+    "repuesto_id": 1,
+    "cantidad": 10,
+    "proveedor": "Distribuidora Sur SRL",
+    "empleado": "Mirko Bubica",
+    "fecha": "2026-06-14"
+  }'
+```
+
+Respuesta `201 Created`:
+```json
+{
+  "id": 613,
+  "repuesto_id": 1,
+  "tipo": "entrada",
+  "cantidad": 10,
+  "empleado": "Mirko Bubica",
+  "fecha": "2026-06-14"
+}
+```
+
+### Registrar salida de stock — REQ-F03
+
+```bash
+curl -X POST http://localhost:8000/stock/salida \
+  -H "Content-Type: application/json" \
+  -d '{
+    "repuesto_id": 1,
+    "cantidad": 3,
+    "empleado": "Celeste Nuñez",
+    "finalidad": "venta"
+  }'
+```
+
+Si `cantidad` supera el `stock_actual`, responde `400 Bad Request` con detalle `"Stock insuficiente"`.
+
+### Consultar stock con filtros — REQ-F04
+
+```bash
+curl "http://localhost:8000/repuestos/?categoria=auto"
+```
+
+Respuesta `200 OK`: lista de objetos `RepuestoResponse` filtrados por categoría.
+
+### Listar repuestos en stock crítico — REQ-F05
+
+```bash
+curl http://localhost:8000/alertas/stock-critico
+```
+
+Respuesta `200 OK`: lista de repuestos cuyo `stock_actual <= stock_minimo`.
+
+### Login de administrador — REQ-NF02
+
+```bash
+curl -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@autobhan.com",
+    "password": "********"
+  }'
+```
+
+Respuesta `200 OK`:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIs...",
+  "token_type": "bearer",
+  "user_email": "admin@autobhan.com"
+}
+```
+
+Si las credenciales son inválidas, responde `401 Unauthorized`.
+
 ## Variables de entorno
 
 Ver `backend/.env.example` y `frontend/.env.example` para la lista completa de variables necesarias.
