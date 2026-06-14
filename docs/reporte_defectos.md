@@ -1,5 +1,5 @@
 # Reporte de Defectos — Hito 4
-**AutoBhan Autopartes — Grupo 6 — v1.0 — 03/06/2026**
+**AutoBhan Autopartes — Grupo 6 — v1.1 — 13/06/2026**
 
 > Los defectos fueron detectados durante el desarrollo y las sesiones de prueba.
 > Cada uno fue cargado como Issue en GitHub y resuelto antes de mergearse a main.
@@ -14,8 +14,8 @@
 | DEF-002 | Mayor | Tests de historial fallan por ilike intermitente en Supabase | tests/test_historial.py | Resuelto |
 | DEF-003 | Mayor | Duplicate key en test_crear_repuesto_exitoso al reusar numero_serie | tests/test_repuestos.py | Resuelto |
 | DEF-004 | Mayor | CC de listar_historial = 11 supera umbral del Plan SQA (≤10) | routers/historial.py | Resuelto |
-| DEF-006 | Menor | supabase_client.py falla al importar si no existe .env (conexión eager) | db/supabase_client.py | Resuelto |
-| DEF-007 | Cosmético | Errores E302 y F401 en test_alertas.py detectados por flake8 | tests/test_alertas.py | Resuelto |
+| DEF-005 | Menor | supabase_client.py falla al importar si no existe .env (conexión eager) | db/supabase_client.py | Resuelto |
+| DEF-006 | Cosmético | Errores E302 y F401 en test_alertas.py detectados por flake8 | tests/test_alertas.py | Resuelto |
 
 ---
 
@@ -68,7 +68,7 @@ radon cc routers/historial.py -s
 
 ---
 
-### DEF-006 — supabase_client.py falla al importar sin .env
+### DEF-005 — supabase_client.py falla al importar sin .env
 **Severidad:** Menor
 **Descripción:** La línea `supabase: Client = get_client()` al final del módulo ejecutaba la conexión en el momento de importar. Si no existía `.env`, cualquier import del módulo fallaba con `ValueError` antes de llegar al test.
 **Pasos para reproducir:**
@@ -79,7 +79,7 @@ radon cc routers/historial.py -s
 
 ---
 
-### DEF-007 — Errores de linter en test_alertas.py
+### DEF-006 — Errores de linter en test_alertas.py
 **Severidad:** Cosmético
 **Descripción:** El pre-commit hook detectó dos errores en `tests/test_alertas.py`:
 - `E302`: faltaba una línea en blanco antes de la función `test_stock_critico_retorna_solo_criticos`
