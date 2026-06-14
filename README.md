@@ -59,6 +59,12 @@ El repositorio incluye un hook que corre **flake8 y pytest automáticamente** an
 .\setup-hooks.ps1
 ```
 
+> Si PowerShell bloquea el script con `running scripts is disabled on this system`
+> (política de ejecución por defecto), corré directamente:
+> ```powershell
+> git config core.hooksPath .githooks
+> ```
+
 **Mac/Linux:**
 ```bash
 sh setup-hooks.sh
@@ -113,7 +119,8 @@ autobhan/
 │   │   ├── auth.py
 │   │   ├── repuestos.py
 │   │   ├── stock.py
-│   │   └── alertas.py
+│   │   ├── alertas.py
+│   │   └── historial.py
 │   ├── models/
 │   ├── schemas/
 │   ├── db/
@@ -122,14 +129,26 @@ autobhan/
 ├── frontend/
 │   └── src/
 │       ├── pages/
-│       ├── components/
+│       │   ├── Dashboard.jsx
+│       │   ├── Repuestos.jsx
+│       │   ├── Movimientos.jsx
+│       │   ├── Historial.jsx
+│       │   └── Login.jsx
 │       └── services/
 └── docs/
+    ├── requerimientos.md
     ├── plan_sqa.md
-    └── rtm.md
+    ├── pipeline.md
+    ├── rtm.md
+    ├── plan_pruebas.md
+    └── reporte_defectos.md
 ```
 
 ## Documentación
 
+- [Catálogo de Requerimientos](docs/requerimientos.md)
 - [Plan SQA](docs/plan_sqa.md)
+- [Pipeline de Calidad](docs/pipeline.md)
 - [Matriz de Trazabilidad (RTM)](docs/rtm.md)
+- [Plan de Pruebas](docs/plan_pruebas.md)
+- [Reporte de Defectos](docs/reporte_defectos.md)
