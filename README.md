@@ -31,7 +31,7 @@ Proyecto integrador — Ingeniería de Software II — IUA 2026 — Grupo 6.
 cd backend
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 Creá un archivo `.env` en `backend/` con las siguientes variables:
