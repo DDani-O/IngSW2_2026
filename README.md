@@ -32,7 +32,18 @@ cd backend
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env            # completar con tus credenciales
+```
+
+Creá un archivo `.env` en `backend/` con las siguientes variables:
+
+```dotenv
+SUPABASE_URL=https://tu-proyecto.supabase.co
+SUPABASE_KEY=tu-anon-key
+APP_ENV=development
+CORS_ORIGINS=http://localhost:5173
+```
+
+```bash
 uvicorn main:app --reload
 ```
 
@@ -44,7 +55,15 @@ Documentación automática: `http://localhost:8000/docs`
 ```bash
 cd frontend
 npm install
-cp .env.example .env            # completar con URL del backend
+```
+
+Creá un archivo `.env` en `frontend/` con:
+
+```dotenv
+VITE_API_URL=http://localhost:8000
+```
+
+```bash
 npm run dev
 ```
 
@@ -208,7 +227,54 @@ Si las credenciales son inválidas, responde `401 Unauthorized`.
 
 ## Variables de entorno
 
-Ver `backend/.env.example` y `frontend/.env.example` para la lista completa de variables necesarias.
+### Backend (`backend/.env`)
+
+| Variable | Descripción |
+|----------|-------------|
+| `SUPABASE_URL` | URL del proyecto Supabase |
+| `SUPABASE_KEY` | Anon key de Supabase |
+| `APP_ENV` | `development` o `production` |
+| `CORS_ORIGINS` | Orígenes permitidos para CORS, separados por coma (URL del frontend) |
+
+### Frontend (`frontend/.env`)
+
+| Variable | Descripción |
+|----------|-------------|
+| `VITE_API_URL` | URL base del backend (FastAPI) |
+
+> ⚠️ El frontend **nunca** debe tener credenciales de Supabase. Toda comunicación con
+> Supabase pasa por el backend (REQ-NF02).
+
+## Deploy en Railway
+
+El proyecto se despliega como **dos servicios** dentro del mismo proyecto de Railway.
+
+### Backend
+
+1. **New Service → Deploy from GitHub repo** → seleccionar este repositorio
+2. **Settings → Root Directory** → `backend`
+3. Railway detecta Python e instala `requirements.txt` automáticamente
+4. El `Procfile` ya define el comando de arranque:
+   ```
+   web: uvicorn main:app --host 0.0.0.0 --port $PORT
+   ```
+5. **Variables** → configurar `SUPABASE_URL`, `SUPABASE_KEY`, `APP_ENV=production` y `CORS_ORIGINS` (URL del frontend deployado)
+
+### Frontend
+
+1. **New Service → Deploy from GitHub repo** → mismo repositorio
+2. **Settings → Root Directory** → `frontend`
+3. **Build Command** → `npm run build`
+4. **Start Command** → `npm run preview` (sirve el build con `--host 0.0.0.0 --port $PORT`)
+5. **Variables** → configurar `VITE_API_URL` con la URL del backend deployado
+
+### Orden recomendado
+
+1. Deployar el **backend** primero (con `CORS_ORIGINS` apuntando a `localhost` temporalmente)
+2. Copiar la URL pública que Railway asigna al backend
+3. Deployar el **frontend**, seteando `VITE_API_URL` con esa URL
+4. Copiar la URL pública del frontend
+5. Volver al backend y actualizar `CORS_ORIGINS` con la URL del frontend — Railway redeploya automáticamente al cambiar variables
 
 ## Requerimientos funcionales
 
