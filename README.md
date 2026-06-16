@@ -3,6 +3,10 @@
 Sistema web para gestión de stock de repuestos de automotores (autos, motos, camionetas).  
 Proyecto integrador — Ingeniería de Software II — IUA 2026 — Grupo 6.
 
+🚀 **Demo en producción:** [frontend-production-fd897.up.railway.app](https://frontend-production-fd897.up.railway.app)
+
+---
+
 ## Integrantes
 
 | Nombre | Rol |
@@ -11,19 +15,28 @@ Proyecto integrador — Ingeniería de Software II — IUA 2026 — Grupo 6.
 | Nuñez, Celeste Aylen | QC — testing y defectos |
 | Olguin, Daniel David | Documentador + Referente |
 
+---
+
 ## Stack tecnológico
 
-- **Backend:** Python 3.11 + FastAPI + Uvicorn
-- **Frontend:** React 18 + Vite
-- **Base de datos:** Supabase (PostgreSQL)
-- **ORM/Cliente:** supabase-py
-- **Auth:** Supabase Auth (login de administrador)
+| Capa | Tecnología | Versión |
+|------|-----------|---------|
+| Backend | Python + FastAPI + Uvicorn | Python 3.12 |
+| Frontend | React + Vite | React 18 |
+| Base de datos | Supabase (PostgreSQL) | — |
+| Cliente BD | supabase-py | 2.4.3 |
+| Auth | Supabase Auth vía backend | — |
+| Deploy | Railway (2 servicios) | — |
+
+---
 
 ## Requisitos previos
 
-- Python 3.11+
+- Python 3.12+
 - Node.js 18+
 - Cuenta en Supabase con proyecto creado
+
+---
 
 ## Instalación — Backend
 
@@ -33,6 +46,9 @@ python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt -r requirements-dev.txt
 ```
+
+> `requirements.txt` contiene solo las dependencias de producción (FastAPI, uvicorn, supabase, pydantic).  
+> `requirements-dev.txt` agrega las de desarrollo: pytest, pytest-cov, httpx, flake8, radon.
 
 Creá un archivo `.env` en `backend/` con las siguientes variables:
 
@@ -48,7 +64,9 @@ uvicorn main:app --reload
 ```
 
 La API queda disponible en `http://localhost:8000`  
-Documentación automática: `http://localhost:8000/docs`
+Documentación automática (Swagger): `http://localhost:8000/docs`
+
+---
 
 ## Instalación — Frontend
 
@@ -68,6 +86,11 @@ npm run dev
 ```
 
 El frontend queda disponible en `http://localhost:5173`
+
+> ⚠️ El frontend **nunca** debe tener credenciales de Supabase. Toda comunicación con
+> Supabase pasa por el backend (REQ-NF02).
+
+---
 
 ## Configurar pre-commit hook (obligatorio, una sola vez)
 
@@ -89,12 +112,16 @@ El repositorio incluye un hook que corre **flake8 y pytest automáticamente** an
 sh setup-hooks.sh
 ```
 
+---
+
 ## Ejecutar tests
 
 ```bash
 cd backend
 pytest --cov=. --cov-report=term-missing
 ```
+
+Resultado esperado: **34/34 tests pasando — 95% cobertura**
 
 ## Ejecutar linter
 
@@ -107,10 +134,12 @@ flake8 . --max-complexity=10
 
 ```bash
 cd backend
-radon cc . -a -s    # Complejidad Ciclomática
-radon mi . -s       # Maintainability Index
-radon raw . -s      # Líneas de código
+radon cc . -a -s    # Complejidad Ciclomática (umbral: ≤ 10)
+radon mi . -s       # Maintainability Index (umbral: ≥ 40)
+radon raw . -s      # Líneas de código (objetivo: 800–3000)
 ```
+
+---
 
 ## Ejemplos de uso de la API
 
@@ -146,6 +175,24 @@ Respuesta `201 Created`:
 }
 ```
 
+### Actualizar un repuesto — REQ-F01
+
+```bash
+curl -X PATCH http://localhost:8000/repuestos/1 \
+  -H "Content-Type: application/json" \
+  -d '{"precio": 1800, "stock_minimo": 3}'
+```
+
+Acepta cualquier combinación de: `nombre`, `categoria`, `marca`, `numero_serie`, `precio`, `stock_minimo`.
+
+### Eliminar un repuesto — REQ-F01
+
+```bash
+curl -X DELETE http://localhost:8000/repuestos/1
+```
+
+Respuesta `204 No Content`. Los movimientos asociados se eliminan automáticamente (CASCADE).
+
 ### Registrar entrada de stock — REQ-F02
 
 ```bash
@@ -158,18 +205,6 @@ curl -X POST http://localhost:8000/stock/entrada \
     "empleado": "Mirko Bubica",
     "fecha": "2026-06-14"
   }'
-```
-
-Respuesta `201 Created`:
-```json
-{
-  "id": 613,
-  "repuesto_id": 1,
-  "tipo": "entrada",
-  "cantidad": 10,
-  "empleado": "Mirko Bubica",
-  "fecha": "2026-06-14"
-}
 ```
 
 ### Registrar salida de stock — REQ-F03
@@ -191,9 +226,8 @@ Si `cantidad` supera el `stock_actual`, responde `400 Bad Request` con detalle `
 
 ```bash
 curl "http://localhost:8000/repuestos/?categoria=auto"
+curl "http://localhost:8000/repuestos/?nombre=filtro"
 ```
-
-Respuesta `200 OK`: lista de objetos `RepuestoResponse` filtrados por categoría.
 
 ### Listar repuestos en stock crítico — REQ-F05
 
@@ -208,22 +242,12 @@ Respuesta `200 OK`: lista de repuestos cuyo `stock_actual <= stock_minimo`.
 ```bash
 curl -X POST http://localhost:8000/auth/login \
   -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@autobhan.com",
-    "password": "********"
-  }'
+  -d '{"email": "admin@autobhan.com", "password": "********"}'
 ```
 
-Respuesta `200 OK`:
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIs...",
-  "token_type": "bearer",
-  "user_email": "admin@autobhan.com"
-}
-```
+Responde `200 OK` con JWT o `401 Unauthorized` si las credenciales son inválidas.
 
-Si las credenciales son inválidas, responde `401 Unauthorized`.
+---
 
 ## Variables de entorno
 
@@ -234,7 +258,7 @@ Si las credenciales son inválidas, responde `401 Unauthorized`.
 | `SUPABASE_URL` | URL del proyecto Supabase |
 | `SUPABASE_KEY` | Anon key de Supabase |
 | `APP_ENV` | `development` o `production` |
-| `CORS_ORIGINS` | Orígenes permitidos para CORS, separados por coma (URL del frontend) |
+| `CORS_ORIGINS` | Origen permitido para CORS (URL del frontend) |
 
 ### Frontend (`frontend/.env`)
 
@@ -242,51 +266,86 @@ Si las credenciales son inválidas, responde `401 Unauthorized`.
 |----------|-------------|
 | `VITE_API_URL` | URL base del backend (FastAPI) |
 
-> ⚠️ El frontend **nunca** debe tener credenciales de Supabase. Toda comunicación con
-> Supabase pasa por el backend (REQ-NF02).
+---
 
 ## Deploy en Railway
 
-El proyecto se despliega como **dos servicios** dentro del mismo proyecto de Railway.
+El proyecto corre como **dos servicios** dentro del mismo proyecto de Railway.
 
 ### Backend
 
 1. **New Service → Deploy from GitHub repo** → seleccionar este repositorio
 2. **Settings → Root Directory** → `backend`
-3. Railway detecta Python e instala `requirements.txt` automáticamente
-4. El `Procfile` ya define el comando de arranque:
+3. Railway detecta Python 3.12 via `runtime.txt` e instala `requirements.txt` automáticamente
+4. El `Procfile` define el comando de arranque:
    ```
    web: uvicorn main:app --host 0.0.0.0 --port $PORT
    ```
-5. **Variables** → configurar `SUPABASE_URL`, `SUPABASE_KEY`, `APP_ENV=production` y `CORS_ORIGINS` (URL del frontend deployado)
+5. **Variables** → agregar:
+
+| Variable | Valor |
+|----------|-------|
+| `SUPABASE_URL` | URL del proyecto Supabase |
+| `SUPABASE_KEY` | Anon key de Supabase |
+| `APP_ENV` | `production` |
+| `CORS_ORIGINS` | URL del frontend en Railway (con `https://`) |
 
 ### Frontend
 
 1. **New Service → Deploy from GitHub repo** → mismo repositorio
 2. **Settings → Root Directory** → `frontend`
 3. **Build Command** → `npm run build`
-4. **Start Command** → `npm run preview` (sirve el build con `--host 0.0.0.0 --port $PORT`)
-5. **Variables** → configurar `VITE_API_URL` con la URL del backend deployado
+4. **Start Command** → `npm run preview`
+5. **Variables** → agregar `VITE_API_URL` con la URL del backend (con `https://`)
 
 ### Orden recomendado
 
-1. Deployar el **backend** primero (con `CORS_ORIGINS` apuntando a `localhost` temporalmente)
-2. Copiar la URL pública que Railway asigna al backend
-3. Deployar el **frontend**, seteando `VITE_API_URL` con esa URL
+1. Deployar el **backend** primero
+2. Copiar la URL pública del backend
+3. Deployar el **frontend** con `VITE_API_URL` apuntando al backend
 4. Copiar la URL pública del frontend
-5. Volver al backend y actualizar `CORS_ORIGINS` con la URL del frontend — Railway redeploya automáticamente al cambiar variables
+5. Actualizar `CORS_ORIGINS` en el backend con la URL del frontend
 
-## Requerimientos funcionales
+---
+
+## Decisiones de diseño
+
+### Auth vía backend (no directa a Supabase)
+El frontend nunca habla directamente con Supabase. Todo pasa por el backend (FastAPI), que maneja las credenciales en el servidor. Esto evita exponer el `anon key` en el bundle de React (las variables `VITE_*` quedan visibles en el cliente).
+
+### Tests con base de datos real
+Elegimos testear contra Supabase real en vez de mocks. Es más lento pero detecta bugs que los mocks esconden (FK constraints, tipos de datos, RLS). Para evitar colisiones entre tests, cada test genera números de serie únicos por timestamp en milliseconds (`TEST-{int(time.time() * 1000)}`).
+
+### Separación de requirements de producción y dev
+`requirements.txt` solo tiene las dependencias necesarias para correr el servidor (FastAPI, uvicorn, supabase, pydantic). `requirements-dev.txt` agrega las de testing y métricas (pytest, flake8, radon). Esto reduce el tiempo de build en Railway y la superficie de ataque en producción.
+
+### RLS en Supabase
+La base de datos tiene Row Level Security activo en todas las tablas. Se definieron políticas explícitas para SELECT, INSERT, UPDATE y DELETE (tanto para el rol `anon` como para `authenticated`). Sin una política para un verbo, Supabase bloquea la operación silenciosamente.
+
+### ON DELETE CASCADE en movimientos
+La FK `movimientos.repuesto_id → repuestos.id` está configurada con `ON DELETE CASCADE`. Al eliminar un repuesto, sus movimientos asociados se eliminan automáticamente. Esto mantiene la integridad referencial sin necesidad de lógica adicional en el backend.
+
+### Conexión lazy a Supabase
+El cliente de Supabase se instancia solo cuando se llama a `_get_db()` por primera vez dentro de cada request, no al importar el módulo. Esto permite que los tests se carguen sin necesidad de tener el `.env` configurado y evita errores en el arranque si las variables no están presentes.
+
+### Complejidad Ciclomática máxima: 10
+Definido en el Plan SQA. `flake8` lo verifica con `--max-complexity=10` en cada commit. La única función que superó el umbral fue `listar_historial` (CC=11), que fue refactorizada en tres funciones auxiliares para bajarla a 6.
+
+---
+
+## Requerimientos
 
 | ID | Descripción |
 |----|-------------|
-| REQ-F01 | Registrar un repuesto con nombre, categoría, marca, número de serie, precio y stock inicial |
-| REQ-F02 | Registrar entrada de stock (reposición) con repuesto, cantidad, proveedor, empleado y fecha |
-| REQ-F03 | Registrar salida de stock (venta/uso) e impedir operación si el stock resultante sería negativo |
-| REQ-F04 | Consultar stock actual de todos los repuestos con filtros por categoría |
-| REQ-F05 | Listar repuestos cuyo stock sea menor o igual al stock mínimo configurado (stock crítico) |
-| REQ-NF01 | La consulta de stock no debe superar 2 segundos con hasta 500 repuestos registrados |
-| REQ-NF02 | Los datos deben persistir en base de datos relacional (Supabase/PostgreSQL) |
+| REQ-F01 | Registrar, editar y eliminar repuestos (nombre, categoría, marca, serie, precio, stock) |
+| REQ-F02 | Registrar entrada de stock con repuesto, cantidad, proveedor, empleado y fecha |
+| REQ-F03 | Registrar salida de stock e impedir la operación si el stock resultante sería negativo |
+| REQ-F04 | Consultar stock con filtros por categoría y nombre |
+| REQ-F05 | Listar repuestos cuyo stock sea menor o igual al stock mínimo (stock crítico) |
+| REQ-NF01 | Respuesta ≤ 2 segundos con 500+ repuestos (verificado: ~0.19s con 562 repuestos) |
+| REQ-NF02 | Datos en base de datos relacional. Credenciales nunca expuestas al cliente |
+
+---
 
 ## Estructura del proyecto
 
@@ -294,26 +353,29 @@ El proyecto se despliega como **dos servicios** dentro del mismo proyecto de Rai
 autobhan/
 ├── backend/
 │   ├── main.py
+│   ├── Procfile
+│   ├── runtime.txt              # Fija Python 3.12 para Railway
+│   ├── requirements.txt         # Dependencias de producción
+│   ├── requirements-dev.txt     # Dependencias de desarrollo y testing
 │   ├── routers/
 │   │   ├── auth.py
-│   │   ├── repuestos.py
+│   │   ├── repuestos.py         # CRUD completo: GET, POST, PATCH, DELETE
 │   │   ├── stock.py
 │   │   ├── alertas.py
 │   │   └── historial.py
-│   ├── models/
 │   ├── schemas/
 │   ├── db/
-│   ├── tests/
-│   └── requirements.txt
+│   └── tests/
 ├── frontend/
 │   └── src/
 │       ├── pages/
 │       │   ├── Dashboard.jsx
-│       │   ├── Repuestos.jsx
-│       │   ├── Movimientos.jsx
+│       │   ├── Repuestos.jsx    # Edición inline + eliminación con confirmación
+│       │   ├── Movimientos.jsx  # Selector con búsqueda predictiva
 │       │   ├── Historial.jsx
 │       │   └── Login.jsx
 │       └── services/
+│           └── api.js
 └── docs/
     ├── requerimientos.md
     ├── plan_sqa.md
@@ -322,6 +384,8 @@ autobhan/
     ├── plan_pruebas.md
     └── reporte_defectos.md
 ```
+
+---
 
 ## Documentación
 
