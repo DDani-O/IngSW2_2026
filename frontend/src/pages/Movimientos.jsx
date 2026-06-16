@@ -84,6 +84,13 @@ export default function Movimientos() {
     }
   };
 
+  const limpiarFormulario = () => {
+    setForm({ repuesto_id: '', cantidad: '', empleado: '', proveedor: '', finalidad: '' });
+    setBusqueda('');
+    setMensaje('');
+    setError('');
+  };
+
   return (
     <div style={styles.page}>
       <h2 style={styles.titulo}>Movimientos de Stock</h2>
@@ -209,16 +216,26 @@ export default function Movimientos() {
         {mensaje && <p style={styles.ok}>{mensaje}</p>}
         {error && <p style={styles.error}>⚠ {error}</p>}
 
-        <button
-          style={{
-            ...styles.btn,
-            ...(loading || !form.repuesto_id ? { opacity: 0.7, cursor: 'not-allowed' } : {}),
-          }}
-          type="submit"
-          disabled={loading || !form.repuesto_id}
-        >
-          {loading ? 'Registrando...' : `Registrar ${tipo}`}
-        </button>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button
+            style={styles.btnLimpiar}
+            type="button"
+            onClick={limpiarFormulario}
+          >
+            Limpiar formulario
+          </button>
+          <button
+            style={{
+              ...styles.btn,
+              flex: 1,
+              ...(loading || !form.repuesto_id ? { opacity: 0.7, cursor: 'not-allowed' } : {}),
+            }}
+            type="submit"
+            disabled={loading || !form.repuesto_id}
+          >
+            {loading ? 'Registrando...' : `Registrar ${tipo}`}
+          </button>
+        </div>
       </form>
     </div>
   );
@@ -262,6 +279,11 @@ const styles = {
     background: '#1B3A5C', color: '#fff', border: 'none',
     borderRadius: '6px', padding: '0.7rem', fontSize: '1rem',
     cursor: 'pointer', fontWeight: '600',
+  },
+  btnLimpiar: {
+    background: '#f3f4f6', color: '#374151', border: '1px solid #d1d5db',
+    borderRadius: '6px', padding: '0.7rem 1rem', fontSize: '0.9rem',
+    cursor: 'pointer', fontWeight: '500',
   },
   ok: { color: '#16a34a', fontWeight: '600', margin: 0 },
   error: { color: '#dc2626', margin: 0 },

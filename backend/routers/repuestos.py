@@ -86,3 +86,17 @@ def actualizar_repuesto(repuesto_id: int, datos: RepuestoUpdate):
     if not result.data:
         raise HTTPException(status_code=404, detail="Repuesto no encontrado")
     return result.data[0]
+
+
+@router.delete("/{repuesto_id}", status_code=204)
+def eliminar_repuesto(repuesto_id: int):
+    """
+    Elimina un repuesto del sistema por su ID.
+
+    Trazabilidad: REQ-F01
+    """
+    db = _get_db()
+    result = db.table("repuestos").select("id").eq("id", repuesto_id).execute()
+    if not result.data:
+        raise HTTPException(status_code=404, detail="Repuesto no encontrado")
+    db.table("repuestos").delete().eq("id", repuesto_id).execute()

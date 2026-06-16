@@ -46,6 +46,7 @@ export const repuestosService = {
   crear: (data) => request('/repuestos/', { method: 'POST', body: JSON.stringify(data) }),
   obtener: (id) => request(`/repuestos/${id}`),
   actualizar: (id, data) => request(`/repuestos/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  eliminar: (id) => request(`/repuestos/${id}`, { method: 'DELETE' }),
 };
 
 // REQ-F02: entrada de stock

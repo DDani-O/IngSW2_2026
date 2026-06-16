@@ -60,6 +60,9 @@ class RepuestoUpdate(BaseModel):
     Trazabilidad: REQ-F01
     """
 
-    nombre: Optional[str] = None
+    nombre: Optional[str] = Field(default=None, min_length=2, max_length=100)
+    categoria: Optional[Categoria] = None
+    marca: Optional[str] = Field(default=None, min_length=1, max_length=80)
+    numero_serie: Optional[str] = Field(default=None, min_length=1, max_length=60)
     precio: Optional[float] = Field(default=None, gt=0)
     stock_minimo: Optional[int] = Field(default=None, ge=0)
