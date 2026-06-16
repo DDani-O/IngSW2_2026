@@ -99,6 +99,8 @@ Particiones para `categoria`:
 
 ---
 
+> **Nota TC-CN-002 y TC-CN-003:** El frontend tiene validación nativa (`min="0"` en el campo de precio) que impide ingresar negativos desde la UI. Estos casos verifican que el **backend también valida** de forma independiente — ambas capas son correctas y complementarias. Al invocar la API directamente (curl, Postman), precio=-1 y precio=0 devuelven HTTP 422.
+
 ### REQ-F02 — Entrada de stock
 
 **Técnica: Partición de equivalencia + Valores límite**

@@ -51,8 +51,8 @@ Una fila sin código = no implementado. Una fila sin tests = no verificado.
 | ID | REQ | Técnica | Entrada / Condición | Resultado esperado | Estado |
 |----|-----|---------|--------------------|--------------------|--------|
 | TC-CN-001 | REQ-F01 | Partición válida | nombre, cat=auto, precio=1500, stock=10 | HTTP 201, repuesto creado | Pasa |
-| TC-CN-002 | REQ-F01 | Valor límite | precio = -1 | HTTP 422 | Pasa |
-| TC-CN-003 | REQ-F01 | Valor límite | precio = 0 | HTTP 422 | Pasa |
+| TC-CN-002 | REQ-F01 | Valor límite | precio = -1 (via API) | HTTP 422 | Pasa |
+| TC-CN-003 | REQ-F01 | Valor límite | precio = 0 (via API) | HTTP 422 | Pasa |
 | TC-CN-004 | REQ-F01 | Partición inválida | categoria = barco | HTTP 422 | Pasa |
 | TC-CN-005 | REQ-F01 | Partición inválida | GET /repuestos/999999 | HTTP 404 | Pasa |
 | TC-CN-006 | REQ-F01 | Partición válida | PATCH precio=2500, stock_minimo=4 | HTTP 200, actualizado | Pasa |
