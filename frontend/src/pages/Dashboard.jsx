@@ -32,7 +32,6 @@ export default function Dashboard({ onLogout }) {
     <div style={styles.page}>
       <header style={styles.header}>
         <h1 style={styles.titulo}>🔧 AutoBhan Autopartes</h1>
-        <button style={styles.btnLogout} onClick={onLogout}>Cerrar sesión</button>
       </header>
 
       {loading ? (
@@ -86,13 +85,10 @@ const styles = {
   page: { minHeight: '100vh', background: '#f0f4f8', fontFamily: 'system-ui, sans-serif' },
   header: {
     background: '#1B3A5C', color: '#fff', padding: '1rem 2rem',
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    display: 'flex', alignItems: 'center',
   },
   titulo: { margin: 0, fontSize: '1.25rem' },
-  btnLogout: {
-    background: 'transparent', color: '#cbd5e1', border: '1px solid #cbd5e1',
-    borderRadius: '6px', padding: '0.4rem 0.9rem', cursor: 'pointer',
-  },
+
   main: { padding: '2rem' },
   cards: { display: 'flex', gap: '1.5rem', marginBottom: '2rem', flexWrap: 'wrap' },
   card: {
