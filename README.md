@@ -249,6 +249,59 @@ Responde `200 OK` con JWT o `401 Unauthorized` si las credenciales son inválida
 
 ---
 
+
+## Ejecutar casos de prueba manualmente (curl)
+
+Comandos base para ejecutar los casos de prueba desde la terminal. Reemplazá los valores según cada caso. Funcionan tanto contra local (`http://localhost:8000`) como contra producción (`https://backend-production-052ad.up.railway.app`).
+
+### GET — consultar recursos
+
+```bash
+curl -s -X GET "https://backend-production-052ad.up.railway.app/repuestos/" \
+  -w "\nHTTP: %{http_code}\n"
+```
+
+### POST — crear / registrar
+
+```bash
+curl -s -X POST "https://backend-production-052ad.up.railway.app/repuestos/" \
+  -H "Content-Type: application/json" \
+  -d '{"campo": "valor"}' \
+  -w "\nHTTP: %{http_code}\n"
+```
+
+### PATCH — actualizar parcialmente
+
+```bash
+curl -s -X PATCH "https://backend-production-052ad.up.railway.app/repuestos/{id}" \
+  -H "Content-Type: application/json" \
+  -d '{"campo": "valor"}' \
+  -w "\nHTTP: %{http_code}\n"
+```
+
+### DELETE — eliminar
+
+```bash
+curl -s -X DELETE "https://backend-production-052ad.up.railway.app/repuestos/{id}" \
+  -w "\nHTTP: %{http_code}\n"
+```
+
+### Endpoints disponibles
+
+| Endpoint | Métodos |
+|----------|---------|
+| `/repuestos/` | GET, POST |
+| `/repuestos/{id}` | GET, PATCH, DELETE |
+| `/stock/entrada` | POST |
+| `/stock/salida` | POST |
+| `/alertas/stock-critico` | GET |
+| `/historial/` | GET |
+| `/auth/login` | POST |
+| `/auth/logout` | POST |
+| `/health` | GET |
+
+> **Flags:** `-s` silencia el progreso · `-H` define el header · `-d` es el body JSON · `-w` imprime el código HTTP al final.
+
 ## Variables de entorno
 
 ### Backend (`backend/.env`)
