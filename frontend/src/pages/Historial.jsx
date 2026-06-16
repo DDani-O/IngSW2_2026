@@ -3,7 +3,7 @@
 // Permite filtrar por tipo, repuesto y empleado.
 // Trazabilidad: REQ-F02, REQ-F03
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { historialService, repuestosService } from '../services/api';
 
 const BADGE = {
@@ -33,9 +33,45 @@ export default function Historial() {
   const [filtroDesde,     setFiltroDesde]     = useState('');
   const [filtroHasta,     setFiltroHasta]     = useState('');
 
+  // Búsqueda predictiva de repuesto en filtros
+  const [busquedaRep,    setBusquedaRep]    = useState('');
+  const [mostrarListaRep, setMostrarListaRep] = useState(false);
+  const busquedaRepRef = useRef(null);
+  const listaRepRef    = useRef(null);
+
   useEffect(() => {
     repuestosService.listar().then(setRepuestos).catch(() => {});
   }, []);
+
+  // Cerrar lista predictiva al hacer click fuera
+  useEffect(() => {
+    const handleClickFuera = (e) => {
+      if (
+        busquedaRepRef.current && !busquedaRepRef.current.contains(e.target) &&
+        listaRepRef.current && !listaRepRef.current.contains(e.target)
+      ) {
+        setMostrarListaRep(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickFuera);
+    return () => document.removeEventListener('mousedown', handleClickFuera);
+  }, []);
+
+  const repuestosFiltrados = repuestos.filter((r) => {
+    const txt = busquedaRep.toLowerCase();
+    return (
+      r.nombre.toLowerCase().includes(txt) ||
+      r.marca.toLowerCase().includes(txt) ||
+      r.categoria.toLowerCase().includes(txt) ||
+      r.numero_serie.toLowerCase().includes(txt)
+    );
+  }).slice(0, 20);
+
+  const seleccionarRepuesto = (r) => {
+    setFiltroRepuesto(String(r.id));
+    setBusquedaRep(`${r.nombre} — ${r.marca}`);
+    setMostrarListaRep(false);
+  };
 
   const cargar = useCallback(async () => {
     setLoading(true);
@@ -61,6 +97,7 @@ export default function Historial() {
   const limpiar = () => {
     setFiltroTipo('');
     setFiltroRepuesto('');
+    setBusquedaRep('');
     setFiltroEmpleado('');
     setFiltroDesde('');
     setFiltroHasta('');
@@ -81,12 +118,44 @@ export default function Historial() {
           <option value="salida">▼ Salidas</option>
         </select>
 
-        <select style={s.input} value={filtroRepuesto} onChange={e => setFiltroRepuesto(e.target.value)}>
-          <option value="">Todos los repuestos</option>
-          {repuestos.map(r => (
-            <option key={r.id} value={r.id}>{r.nombre} — {r.marca}</option>
-          ))}
-        </select>
+        <div style={s.autocompleteWrapper}>
+          <input
+            ref={busquedaRepRef}
+            style={{ ...s.input, width: '100%', boxSizing: 'border-box' }}
+            type="text"
+            placeholder="Buscar repuesto..."
+            value={busquedaRep}
+            onChange={(e) => {
+              setBusquedaRep(e.target.value);
+              setFiltroRepuesto('');
+              setMostrarListaRep(true);
+            }}
+            onFocus={() => setMostrarListaRep(true)}
+            autoComplete="off"
+          />
+          {mostrarListaRep && busquedaRep.length > 0 && (
+            <ul ref={listaRepRef} style={s.lista}>
+              {busquedaRep === '' || repuestosFiltrados.length > 0 ? (
+                repuestosFiltrados.map((r) => (
+                  <li
+                    key={r.id}
+                    style={s.listaItem}
+                    onMouseDown={() => seleccionarRepuesto(r)}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#EFF6FF'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#fff'}
+                  >
+                    <span style={s.listaItemNombre}>{r.nombre}</span>
+                    <span style={s.listaItemMeta}>{r.categoria} · {r.marca} · Serie: {r.numero_serie}</span>
+                  </li>
+                ))
+              ) : (
+                <li style={{ ...s.listaItem, color: '#9ca3af', fontStyle: 'italic' }}>
+                  Sin resultados para "{busquedaRep}"
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
 
         <input
           style={s.input}
@@ -249,6 +318,20 @@ const s = {
     textAlign: 'left', fontSize: '0.8rem', whiteSpace: 'nowrap',
   },
   td:         { padding: '0.6rem 0.85rem', borderBottom: '1px solid #e2e8f0', fontSize: '0.875rem' },
+  autocompleteWrapper: { position: 'relative', minWidth: '200px' },
+  lista: {
+    position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100,
+    background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px',
+    boxShadow: '0 4px 16px rgba(0,0,0,0.12)', margin: '2px 0 0 0',
+    padding: 0, listStyle: 'none', maxHeight: '220px', overflowY: 'auto',
+  },
+  listaItem: {
+    padding: '0.55rem 0.85rem', cursor: 'pointer', background: '#fff',
+    display: 'flex', flexDirection: 'column', gap: '0.1rem',
+    borderBottom: '1px solid #f3f4f6',
+  },
+  listaItemNombre: { fontSize: '0.88rem', fontWeight: '600', color: '#1B3A5C' },
+  listaItemMeta:   { fontSize: '0.75rem', color: '#6b7280' },
   badge: {
     display: 'inline-block', padding: '0.2rem 0.6rem',
     borderRadius: '999px', fontSize: '0.78rem', fontWeight: 600,
